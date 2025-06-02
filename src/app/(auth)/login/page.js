@@ -58,8 +58,8 @@ const Page = () => {
                     </button>
                 </form>
 
-                <p className="mt-6  text-gray-600"> 
-                    Already have an account? 
+                <p className="mt-6  text-gray-600">
+                    Already have an account?
                     <Link href="/signup" className="text-[#4b1c2f] font-semibold hover:underline">
                         Sign Up
                     </Link>
