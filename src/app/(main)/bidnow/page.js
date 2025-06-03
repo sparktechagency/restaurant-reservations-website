@@ -361,10 +361,10 @@ const Page = () => {
                             className="rounded object-cover w-full h-20"
                             loading="lazy"
                         />
-                    ))}
+                    ))} 
                 </div>
 
-                {/* Right Panel - Map */}
+                {/* Right Panel - Map    */}
                 <div className="flex-1 max-h-[20vh]  rounded overflow-hidden shadow-lg border border-[#601a2e]">
                     <LoadScript googleMapsApiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || 'AIzaSyBUKgC5i0rzRLbGhndTjM0b6QdWbigR6_E'}>
                         <GoogleMap mapContainerStyle={containerStyle} center={center} zoom={11}>
