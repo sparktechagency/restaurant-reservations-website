@@ -8,7 +8,9 @@ const Header = () => {
             <div className='container'>
                 <div className='flex items-center justify-between'>
                     <div className='flex items-center'>
-                        <img className='w-28 cursor-pointer' src="/Images/Auth/logo2.png" alt="" />
+                        <Link href={'/'}>
+                            <img className='w-28 cursor-pointer' src="/Images/Auth/logo2.png" alt="" />
+                        </Link>
                         <p className='flex items-center gap-1 text-sm md:text-base text-white font-medium'><CiLocationOn className='text-2xl' /> London, United Kingdom </p>
                     </div>
                     <Link href={'/login'}>
@@ -20,4 +22,4 @@ const Header = () => {
     );
 }
 
-export default Header;
+export default Header; 
