@@ -25,9 +25,9 @@ export default function Layout({ children }) {
     return (
         <div>
             <Header />
-            <div className="grid grid-cols-6 gap-5">
+            <div className="md:grid grid-cols-6 gap-5">
                 <Sidebar className="col-span-1" />
-                <div className="col-span-5">
+                <div className="col-span-5 pt-10 md:pt-0">
                     {children}
                 </div>
             </div>
