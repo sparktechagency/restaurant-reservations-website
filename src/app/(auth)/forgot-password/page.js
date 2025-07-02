@@ -3,7 +3,6 @@ import React from 'react';
 
 const Page = () => {
     return (
-
         <div className="flex flex-col md:flex-row min-h-screen">
             {/* Left side - form */}
             <div className='md:flex-[2] flex flex-col justify-center items-start px-6 md:px-20 p-20 md:pt-0  bg-white
