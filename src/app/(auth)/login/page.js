@@ -1,19 +1,64 @@
 'use client'
 import React, { useState } from 'react';
 import Link from 'next/link';
+import { useAdminLoginMutation } from '@/redux/features/auth/login';
+import { ToastContainer, toast } from 'react-toastify';
+import { Joan } from 'next/font/google';
+import { useRouter } from 'next/navigation';
 
 const Page = () => {
     const [showPassword, setShowPassword] = useState(false);
     const togglePassword = () => setShowPassword(prev => !prev);
+    const navigate = useRouter();
+
+    const [loginUser] = useAdminLoginMutation();
+
+
+
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+
+        const data = {
+            email: e.target.email.value,
+            password: e.target.password.value
+        };
+
+        try {
+            const response = await loginUser(data).unwrap();
+            console.log('Login successful:', response);
+            if (response?.code === 200) {
+                localStorage.setItem('userinfo', JSON.stringify(response?.data?.attributes));
+
+                toast.success('Login successful!');
+                // Redirect to dashboard or home page
+                if (response?.data?.attributes?.role === 'user') {
+                    navigate.push('/'); // Adjust the path as needed
+                }
+                else if (response?.data?.attributes?.user?.role === 'admin') {
+                    navigate.push('/admin/dashboard'); // Adjust the path as needed
+                }
+
+
+            } else {
+                console.error('Login failed:', response);
+            }
+
+        } catch (error) {
+            toast.error(error?.data?.message || 'Login failed. Please try again.');
+        }
+
+    }
+
 
     return (
         <div className="flex flex-col md:flex-row min-h-screen">
+            <ToastContainer position="top-right" theme="colored" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
             {/* Left side - form */}
-            <div className="md:flex-[2] flex flex-col justify-center items-start px-6 md:px-20 p-20 md:pt-0  bg-white
+            <div className="md:flex-[2] flex flex-col justify-center md:items-start items-center px-6 md:px-20 p-20 md:pt-0  bg-white
                       md:ml-36 md:min-h-screen">
                 <h2 className="text-2xl md:text-3xl font-bold mb-6">Login Now</h2>
 
-                <form className="w-full max-w-md">
+                <form onSubmit={handleSubmit} className="w-full max-w-md">
                     <label className="block text-sm font-semibold mb-1" htmlFor="email">Email</label>
                     <input
                         id="email"

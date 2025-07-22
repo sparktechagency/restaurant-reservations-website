@@ -1,4 +1,5 @@
 'use client'
+import { useVerifyOtpMutation } from '@/redux/features/auth/login';
 import Link from 'next/link';
 import React, { useState } from 'react';
 import OTPInput from 'react-otp-input';
@@ -6,7 +7,28 @@ import OTPInput from 'react-otp-input';
 const Page = () => {
 
     const [otp, setOtp] = useState('');
-    console.log(otp);
+    const [verifyOtp] = useVerifyOtpMutation();
+
+    const handleVerify = async () => {
+
+        const data = {
+            code: otp,
+            email: new URLSearchParams(window.location.search).get('email') // Assuming email is passed in the query params
+        };
+ 
+        try {
+            const response = await verifyOtp(data).unwrap();
+            console.log('OTP verification successful:', response);
+            if (response?.code === 200) {
+                // Redirect or show success message
+            } else {
+                console.error('OTP verification failed:', response);
+            }
+        } catch (error) {
+            console.error('Error verifying OTP:', error);
+        }
+
+    }
 
     return (
         <div className="flex flex-col md:flex-row min-h-screen">
@@ -34,9 +56,9 @@ const Page = () => {
 
 
                     </div>
-                    <Link href="/update-password" className='mt-5 block'>
+                    <button onClick={handleVerify} className='mt-5 block'>
                         <button className='cursor-pointer w-full p-2 bg-[#4b1c2f]  font-semibold text-white rounded-md'>Verify</button>
-                    </Link>
+                    </button>
                 </div>
             </div>
 

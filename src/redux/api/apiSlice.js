@@ -5,7 +5,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const apiSlice = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
-    baseUrl: "https://api.bidmedic.com/api/v1",
+    baseUrl: "https://luxtable.sakibahmad.com/api/v1",
     // baseUrl: "http://104.131.190.64:6089/api/v1",
     prepareHeaders: (headers, { getState }) => {
       const token = localStorage.getItem("token");

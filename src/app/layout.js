@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import NextTopLoader from "nextjs-toploader";
+import ProviderContent from "@/redux/ProviderContent";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,6 +22,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
 
+
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
@@ -32,7 +34,9 @@ export default function RootLayout({ children }) {
           easing="ease"     // Animation easing
 
         />
-        {children}
+        <ProviderContent>
+          {children}
+        </ProviderContent>
       </body>
     </html>
   );
