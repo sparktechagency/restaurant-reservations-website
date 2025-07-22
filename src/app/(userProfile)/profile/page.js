@@ -1,5 +1,6 @@
 'use client';
-import React, { useState, useRef } from 'react';
+import url from '@/redux/api/baseUrl';
+import React, { useState, useRef, use, useEffect } from 'react';
 import { IoCalendarOutline, IoCameraOutline } from 'react-icons/io5';
 
 const Page = () => {
@@ -18,13 +19,26 @@ const Page = () => {
         }
     };
 
+    const [userinfo, setUserinfo] = useState(null);
+
+    useEffect(() => {
+        // Cleanup the URL object when the component unmounts
+        const userinfo = localStorage.getItem('userinfo');
+        setUserinfo(userinfo ? JSON.parse(userinfo) : null);
+    }, []);
+
+    console.log(userinfo);
+
+
+
+
     return (
         <div className="max-w-md mx-auto p-6 font-sans">
             {/* Profile Image */}
             <div className="relative mx-auto w-40 h-40 rounded-full bg-[#4B1C2F] flex items-center justify-center cursor-pointer overflow-hidden">
                 {profileImage ? (
                     <img
-                        src={profileImage}
+                        src={profileImage ? profileImage : (url + userinfo?.user?.image)}
                         alt="Profile"
                         className="w-full h-full object-cover rounded-full"
                         onClick={() => fileInputRef.current.click()}
@@ -57,9 +71,10 @@ const Page = () => {
                     </label>
                     <input
                         type="text"
+
                         id="username"
                         placeholder="Enter your last name"
-                        value={username}
+                        value={userinfo?.user?.fullName ? userinfo?.user?.fullName : username}
                         onChange={(e) => setUsername(e.target.value)}
                         className="w-full border border-[#4B1C2F] rounded px-3 py-2 text-[#4B1C2F] placeholder:text-[#a87f8e] focus:outline-none focus:ring-2 focus:ring-[#4B1C2F]"
                     />
@@ -73,8 +88,9 @@ const Page = () => {
                     <input
                         type="email"
                         id="email"
+                        disabled
                         placeholder="Enter your email address"
-                        value={email}
+                        value={userinfo?.user?.email ? userinfo?.user?.email : email}
                         onChange={(e) => setEmail(e.target.value)}
                         className="w-full border border-[#4B1C2F] rounded px-3 py-2 text-[#4B1C2F] placeholder:text-[#a87f8e] focus:outline-none focus:ring-2 focus:ring-[#4B1C2F]"
                     />
@@ -89,7 +105,7 @@ const Page = () => {
                         type="tel"
                         id="phone"
                         placeholder="Enter your phone number"
-                        value={phone}
+                        value={userinfo?.user?.phoneNumber ? userinfo?.user?.phoneNumber : phone}
                         onChange={(e) => setPhone(e.target.value)}
                         className="w-full border border-[#4B1C2F] rounded px-3 py-2 text-[#4B1C2F] placeholder:text-[#a87f8e] focus:outline-none focus:ring-2 focus:ring-[#4B1C2F]"
                     />
