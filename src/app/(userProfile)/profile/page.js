@@ -30,8 +30,6 @@ const Page = () => {
     console.log(userinfo);
 
 
-
-
     return (
         <div className="max-w-md mx-auto p-6 font-sans">
             {/* Profile Image */}
