@@ -19,15 +19,12 @@ const Page = () => {
         }
     };
 
-    const [userinfo, setUserinfo] = useState(null);
+    const [userinfo, setUserinfo] = useState(null);   
 
-    useEffect(() => {
-        // Cleanup the URL object when the component unmounts
+    useEffect(() => { 
         const userinfo = localStorage.getItem('userinfo');
         setUserinfo(userinfo ? JSON.parse(userinfo) : null);
     }, []);
-
-    console.log(userinfo);
 
 
     return (
