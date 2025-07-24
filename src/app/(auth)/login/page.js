@@ -31,7 +31,7 @@ const Page = () => {
 
                 toast.success('Login successful!');
                 // Redirect to dashboard or home page
-                if (response?.data?.attributes?.role === 'user') {
+                if (response?.data?.attributes?.user?.role === 'user') {
                     navigate.push('/'); // Adjust the path as needed
                 }
                 else if (response?.data?.attributes?.user?.role === 'admin') {

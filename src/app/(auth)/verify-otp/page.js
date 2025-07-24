@@ -1,13 +1,17 @@
 'use client'
 import { useVerifyOtpMutation } from '@/redux/features/auth/login';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import OTPInput from 'react-otp-input';
+import { ToastContainer, toast } from 'react-toastify';
 
 const Page = () => {
 
     const [otp, setOtp] = useState('');
     const [verifyOtp] = useVerifyOtpMutation();
+    const searchPeramsisSignup = new URLSearchParams(window.location.search).get('isSignup');
+    const navigate = useRouter();
 
     const handleVerify = async () => {
 
@@ -15,10 +19,18 @@ const Page = () => {
             code: otp,
             email: new URLSearchParams(window.location.search).get('email') // Assuming email is passed in the query params
         };
- 
+
         try {
             const response = await verifyOtp(data).unwrap();
             console.log('OTP verification successful:', response);
+            if (!searchPeramsisSignup) {
+                toast.success('OTP verified successfully! You can now log in.');
+                navigate.push(`/update-password?email=${data?.email}`); // Redirect to login page after successful verification
+            }
+            else {
+                toast.success('OTP verified successfully! You can now sign up.');
+                navigate.push('/login'); // Redirect to login page after successful verification
+            }
             if (response?.code === 200) {
                 // Redirect or show success message
             } else {
@@ -26,12 +38,14 @@ const Page = () => {
             }
         } catch (error) {
             console.error('Error verifying OTP:', error);
+            toast.error('Failed to verify OTP. Please try again.');
         }
 
     }
 
     return (
         <div className="flex flex-col md:flex-row min-h-screen">
+            <ToastContainer position="top-right" theme="colored" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
             {/* Left side - form */}
             <div className='md:flex-[2] flex flex-col justify-center items-start px-6 md:px-20 p-20 md:pt-0  bg-white
                       md:ml-36 md:min-h-screen'>

@@ -19,9 +19,9 @@ const Page = () => {
         }
     };
 
-    const [userinfo, setUserinfo] = useState(null);   
+    const [userinfo, setUserinfo] = useState(null);
 
-    useEffect(() => { 
+    useEffect(() => {
         const userinfo = localStorage.getItem('userinfo');
         setUserinfo(userinfo ? JSON.parse(userinfo) : null);
     }, []);
