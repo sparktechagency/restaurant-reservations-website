@@ -3,9 +3,9 @@ import { apiSlice } from "../../../api/apiSlice";
 const getProfile = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getProfile: builder.query({
-      query: () => `/profile/info`,
+      query: () => `/users/self/in`,
       method: "GET",
-      providesTags: ["AdminProfile"]
+      providesTags: ["Profile"]
     })
   })
 });

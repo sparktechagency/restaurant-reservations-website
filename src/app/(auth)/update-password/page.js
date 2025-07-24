@@ -1,22 +1,26 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useResetPasswordMutation } from '@/redux/features/auth/resetPassword';
+import React, { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { useResetPasswordMutation } from '@/redux/features/auth/resetPassword';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const Page = () => {
+function UpdatePasswordForm() {
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const [email, setEmail] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [updatePassword] = useResetPasswordMutation();
-    const router = useRouter();
-    const searchParams = useSearchParams();
-    const email = searchParams.get('email');
+
+    useEffect(() => {
+        const emailParam = searchParams.get('email');
+        if (emailParam) setEmail(emailParam);
+    }, [searchParams]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         const formData = new FormData(e.target);
         const password = formData.get('password');
         const confirmPassword = formData.get('confirmPassword');
@@ -42,12 +46,11 @@ const Page = () => {
                 toast.success('Password updated successfully!');
                 setTimeout(() => {
                     router.push('/login');
-                }, 2000); // Wait 2 seconds so user sees toast
+                }, 2000);
             } else {
                 toast.error('Failed to update password.');
             }
         } catch (error) {
-            console.error('Error updating password:', error);
             toast.error(error?.data?.message || 'Something went wrong.');
         }
     };
@@ -60,20 +63,20 @@ const Page = () => {
                 onSubmit={handleSubmit}
                 className="md:flex-[2] flex flex-col justify-center items-start px-6 md:px-20 p-20 bg-white md:ml-36 md:min-h-screen"
             >
-                <div className="min-w-80 w-full">
+                <div className="max-w-80 w-full">
                     <h2 className="text-3xl font-medium text-center">Update Password</h2>
                     <p className="text-center mt-5 text-gray-600">
                         Please enter your new password and confirm it.
                     </p>
 
-                    {/* Password Field */}
+                    {/* Password */}
                     <div className="mt-5">
                         <label className="font-semibold" htmlFor="password">Password</label>
                         <div className="relative">
                             <input
                                 placeholder="Enter your password"
                                 className="mt-2 w-full p-2 border border-[#4b1c2f] rounded-md focus:outline-none bg-white"
-                                type={showPassword ? "text" : "password"}
+                                type={showPassword ? 'text' : 'password'}
                                 name="password"
                                 id="password"
                             />
@@ -87,14 +90,14 @@ const Page = () => {
                         </div>
                     </div>
 
-                    {/* Confirm Password Field */}
+                    {/* Confirm Password */}
                     <div className="mt-5">
                         <label className="font-semibold" htmlFor="confirmPassword">Confirm Password</label>
                         <div className="relative">
                             <input
                                 placeholder="Confirm your password"
                                 className="mt-2 w-full p-2 border border-[#4b1c2f] rounded-md focus:outline-none bg-white"
-                                type={showConfirmPassword ? "text" : "password"}
+                                type={showConfirmPassword ? 'text' : 'password'}
                                 name="confirmPassword"
                                 id="confirmPassword"
                             />
@@ -108,7 +111,6 @@ const Page = () => {
                         </div>
                     </div>
 
-                    {/* Submit Button */}
                     <div className="mt-5 w-full">
                         <button
                             type="submit"
@@ -120,7 +122,7 @@ const Page = () => {
                 </div>
             </form>
 
-            {/* Right Image */}
+            {/* Image */}
             <div className="md:flex-1 bg-[#4b1c2f] md:flex hidden justify-center items-center relative mt-8 md:mt-0 h-64 md:h-auto">
                 <img
                     src="/Images/Auth/all.png"
@@ -131,6 +133,13 @@ const Page = () => {
             </div>
         </div>
     );
-};
+}
 
-export default Page;
+// ⛑️ Wrap with Suspense to avoid build-time crash
+export default function Page() {
+    return (
+        <Suspense fallback={<div>Loading...</div>}>
+            <UpdatePasswordForm />
+        </Suspense>
+    );
+}

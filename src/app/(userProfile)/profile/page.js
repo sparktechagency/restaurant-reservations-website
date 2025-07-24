@@ -1,134 +1,192 @@
 'use client';
+
+import React, { useState, useEffect, useRef } from 'react';
 import url from '@/redux/api/baseUrl';
-import React, { useState, useRef, use, useEffect } from 'react';
-import { IoCalendarOutline, IoCameraOutline } from 'react-icons/io5';
+import { useGetProfileQuery } from '@/redux/features/auth/profile/getProfile';
+import { useUpdateProfileMutation } from '@/redux/features/auth/profile/editProfile';
+import { IoCameraOutline } from 'react-icons/io5';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Page = () => {
-    const [profileImage, setProfileImage] = useState(null);
-    const [username, setUsername] = useState('');
-    const [email, setEmail] = useState('');
-    const [phone, setPhone] = useState('');
-    const [dob, setDob] = useState('');
-
     const fileInputRef = useRef(null);
+    const { data, refetch } = useGetProfileQuery();
+    const userInfo = data?.data?.attributes?.user;
+
+    const [updateProfile] = useUpdateProfileMutation();
+
+    // Initial States
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [email, setEmail] = useState('');
+    const [callingCode, setCallingCode] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [address, setAddress] = useState('');
+    const [profileImage, setProfileImage] = useState(null);
+    const [previewImage, setPreviewImage] = useState('');
+
+    useEffect(() => {
+        if (userInfo) {
+            setFirstName(userInfo.firstName || '');
+            setLastName(userInfo.lastName || '');
+            setEmail(userInfo.email || '');
+            setCallingCode(userInfo.callingCode || '');
+            setPhoneNumber(userInfo.phoneNumber || '');
+            setAddress(userInfo.address || '');
+            setPreviewImage(userInfo.image ? `${url}${userInfo.image}` : '');
+        }
+    }, [userInfo]);
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            setProfileImage(URL.createObjectURL(file));
+            setProfileImage(file);
+            setPreviewImage(URL.createObjectURL(file));
         }
     };
 
-    const [userinfo, setUserinfo] = useState(null);
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-    useEffect(() => {
-        const userinfo = localStorage.getItem('userinfo');
-        setUserinfo(userinfo ? JSON.parse(userinfo) : null);
-    }, []);
+        const formData = new FormData();
+        formData.append('firstName', firstName);
+        formData.append('lastName', lastName);
+        formData.append('callingCode', callingCode);
+        formData.append('phoneNumber', phoneNumber);
+        formData.append('address', address);
+        if (profileImage) {
+            formData.append('image', profileImage);
+        }
 
+        try {
+            const response = await updateProfile(formData).unwrap();
+            if (response?.code === 200) {
+                toast.success('Profile updated successfully!');
+                refetch(); // Refetch profile data to update UI
+            } else {
+                toast.error(response?.message || 'Update failed.');
+            }
+        } catch (err) {
+            toast.error(err?.data?.message || 'Something went wrong.');
+        }
+    };
 
     return (
-        <div className="max-w-md mx-auto p-6 font-sans">
+        <div className="max-w-xl mx-auto p-6 font-sans">
+            <ToastContainer position="top-right" theme="colored" autoClose={3000} hideProgressBar={false} newestOnTop={false} rtl={false} pauseOnFocusLoss draggable pauseOnHover />
+
             {/* Profile Image */}
-            <div className="relative mx-auto w-40 h-40 rounded-full bg-[#4B1C2F] flex items-center justify-center cursor-pointer overflow-hidden">
-                {profileImage ? (
-                    <img
-                        src={profileImage ? profileImage : (url + userinfo?.user?.image)}
-                        alt="Profile"
-                        className="w-full h-full object-cover rounded-full"
-                        onClick={() => fileInputRef.current.click()}
-                    />
+            <div
+                className="relative mx-auto w-40 h-40 rounded-full bg-[#4B1C2F] flex items-center justify-center cursor-pointer overflow-hidden"
+                onClick={() => fileInputRef.current.click()}
+            >
+                {previewImage ? (
+                    <div className="relative w-full h-full group cursor-pointer">
+                        {/* Profile Image */}
+                        <img
+                            src={previewImage}
+                            alt="Profile"
+                            className="w-full h-full object-cover rounded-full"
+                        />
+
+                        {/* Overlay */}
+                        <div className="absolute inset-0 bg-black bg-opacity-10 flex justify-center items-center rounded-full opacity-30 group-hover:opacity-60 transition-opacity duration-300">
+                            <IoCameraOutline size={34} className="text-white" />
+                        </div>
+                    </div>
+
                 ) : (
-                    <button
-                        onClick={() => fileInputRef.current.click()}
-                        className="flex flex-col items-center justify-center text-white opacity-80 hover:opacity-100 transition-opacity"
-                        aria-label="Add Image"
-                    >
-                        <IoCameraOutline size={32} />
-                        <span className="mt-2 text-sm bg-white text-[#4B1C2F] rounded px-2 py-1">Add Image</span>
-                    </button>
+                    <div className="text-white text-center">
+                        <IoCameraOutline size={34} className="mx-auto" />
+                        <span className="text-sm">Add Image</span>
+                    </div>
                 )}
                 <input
                     type="file"
                     accept="image/*"
-                    className="hidden"
                     ref={fileInputRef}
                     onChange={handleImageChange}
+                    className="hidden"
                 />
             </div>
 
             {/* Form */}
-            <form className="mt-8 space-y-6">
-                {/* Username */}
+            <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+                {/* First Name */}
                 <div>
-                    <label htmlFor="username" className="block text-sm font-medium text-[#4B1C2F] mb-1">
-                        Username
-                    </label>
+                    <label className="block text-sm font-medium text-[#4B1C2F] mb-1">First Name</label>
                     <input
                         type="text"
-
-                        id="username"
-                        placeholder="Enter your last name"
-                        value={userinfo?.user?.fullName ? userinfo?.user?.fullName : username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        className="w-full border border-[#4B1C2F] rounded px-3 py-2 text-[#4B1C2F] placeholder:text-[#a87f8e] focus:outline-none focus:ring-2 focus:ring-[#4B1C2F]"
+                        value={firstName}
+                        onChange={(e) => setFirstName(e.target.value)}
+                        className="w-full border border-[#4B1C2F] rounded px-3 py-2"
+                        placeholder="Enter your first name"
                     />
                 </div>
 
-                {/* Email */}
+                {/* Last Name */}
                 <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-[#4B1C2F] mb-1">
-                        Email
-                    </label>
+                    <label className="block text-sm font-medium text-[#4B1C2F] mb-1">Last Name</label>
+                    <input
+                        type="text"
+                        value={lastName}
+                        onChange={(e) => setLastName(e.target.value)}
+                        className="w-full border border-[#4B1C2F] rounded px-3 py-2"
+                        placeholder="Enter your last name"
+                    />
+                </div>
+
+                {/* Email (disabled) */}
+                <div>
+                    <label className="block text-sm font-medium text-[#4B1C2F] mb-1">Email</label>
                     <input
                         type="email"
-                        id="email"
+                        value={email}
                         disabled
-                        placeholder="Enter your email address"
-                        value={userinfo?.user?.email ? userinfo?.user?.email : email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="w-full border border-[#4B1C2F] rounded px-3 py-2 text-[#4B1C2F] placeholder:text-[#a87f8e] focus:outline-none focus:ring-2 focus:ring-[#4B1C2F]"
+                        className="w-full border border-gray-300 bg-gray-100 rounded px-3 py-2"
+                    />
+                </div>
+
+                {/* Calling Code */}
+                <div>
+                    <label className="block text-sm font-medium text-[#4B1C2F] mb-1">Calling Code</label>
+                    <input
+                        type="text"
+                        value={callingCode}
+                        onChange={(e) => setCallingCode(e.target.value)}
+                        className="w-full border border-[#4B1C2F] rounded px-3 py-2"
+                        placeholder="+880"
                     />
                 </div>
 
                 {/* Phone Number */}
                 <div>
-                    <label htmlFor="phone" className="block text-sm font-medium text-[#4B1C2F] mb-1">
-                        Phone Number
-                    </label>
+                    <label className="block text-sm font-medium text-[#4B1C2F] mb-1">Phone Number</label>
                     <input
                         type="tel"
-                        id="phone"
+                        value={phoneNumber}
+                        onChange={(e) => setPhoneNumber(e.target.value)}
+                        className="w-full border border-[#4B1C2F] rounded px-3 py-2"
                         placeholder="Enter your phone number"
-                        value={userinfo?.user?.phoneNumber ? userinfo?.user?.phoneNumber : phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        className="w-full border border-[#4B1C2F] rounded px-3 py-2 text-[#4B1C2F] placeholder:text-[#a87f8e] focus:outline-none focus:ring-2 focus:ring-[#4B1C2F]"
                     />
                 </div>
 
-                {/* Date of Birth */}
-                <div className="relative">
-                    <label htmlFor="dob" className="block text-sm font-medium text-[#4B1C2F] mb-1">
-                        Date of Birth
-                    </label>
-                    <input
-                        type="date"
-                        id="dob"
-                        placeholder="Enter your date of birth"
-                        value={dob}
-                        onChange={(e) => setDob(e.target.value)}
-                        className="w-full border border-[#4B1C2F] rounded px-3 py-2 pr-2 text-[#4B1C2F] placeholder:text-[#a87f8e] focus:outline-none focus:ring-2 focus:ring-[#4B1C2F]"
+                {/* Address */}
+                <div>
+                    <label className="block text-sm font-medium text-[#4B1C2F] mb-1">Address</label>
+                    <textarea
+                        rows={3}
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
+                        className="w-full border border-[#4B1C2F] rounded px-3 py-2"
+                        placeholder="Enter your address"
                     />
-                    {/* <IoCalendarOutline
-                        size={20}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-[#4B1C2F] pointer-events-none"
-                    /> */}
                 </div>
 
                 {/* Save Button */}
                 <button
                     type="submit"
-                    className="w-full cursor-pointer bg-[#4B1C2F] text-white py-3 rounded mt-6 font-semibold hover:bg-[#632635] transition-colors"
+                    className="w-full cursor-pointer bg-[#4B1C2F] text-white py-3 rounded font-semibold hover:bg-[#632635] transition"
                 >
                     Save Profile
                 </button>

@@ -45,26 +45,26 @@ const Page = () => {
                 onSubmit={handleSubmit}
                 className="md:flex-[2] flex flex-col justify-center items-start px-6 md:px-20 p-20 bg-white md:ml-36 md:min-h-screen"
             >
-                <div className="min-w-96 w-full">
+                <div className="max-w-96 w-full">
                     <h2 className="text-3xl font-medium">Forgot Password?</h2>
                     <p className="mt-5 text-gray-600">
                         Please enter your email address <br /> to reset your password.
                     </p>
-                    <div className="mt-5">
-                        <label className="font-semibold" htmlFor="email">Email</label>
+                    <div className="mt-5 w-full">
+                        <label className="block font-semibold" htmlFor="email">Email</label>
                         <input
                             placeholder="Enter your email"
-                            className="mt-2 w-full p-2 border border-[#4b1c2f] rounded-md focus:outline-none bg-white"
+                            className="mt-2 max-w-96 w-full p-2 border border-[#4b1c2f] rounded-md focus:outline-none bg-white"
                             type="email"
                             name="email"
                             id="email"
                             required
                         />
                     </div>
-                    <div className="mt-5 block">
+                    <div className="mt-5  block">
                         <button
                             type="submit"
-                            className="cursor-pointer w-full p-2 bg-[#4b1c2f] font-semibold text-white rounded-md"
+                            className="cursor-pointer max-w-96 w-full p-2 bg-[#4b1c2f] font-semibold text-white rounded-md"
                         >
                             Send OTP{isLoading && <span className="ml-1">...</span>}
                         </button>

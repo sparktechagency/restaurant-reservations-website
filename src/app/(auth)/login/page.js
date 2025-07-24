@@ -28,6 +28,7 @@ const Page = () => {
             console.log('Login successful:', response);
             if (response?.code === 200) {
                 localStorage.setItem('userinfo', JSON.stringify(response?.data?.attributes));
+                localStorage.setItem("token", response?.data?.attributes?.tokens?.access?.token);
 
                 toast.success('Login successful!');
                 // Redirect to dashboard or home page
@@ -105,7 +106,7 @@ const Page = () => {
 
                 <p className="mt-6  text-gray-600">
                     Already have an account?
-                    <Link href="/signup" className="text-[#4b1c2f] font-semibold hover:underline">
+                    <Link href="/signup" className="text-[#4b1c2f] cursor-pointer font-semibold hover:underline">
                         Sign Up
                     </Link>
                 </p>

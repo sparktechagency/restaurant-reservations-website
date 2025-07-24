@@ -1,23 +1,22 @@
 'use client';
 import url from '@/redux/api/baseUrl';
+import { useGetProfileQuery } from '@/redux/features/auth/profile/getProfile';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { CiLocationOn } from "react-icons/ci";
 import { FaRegUserCircle } from 'react-icons/fa';
 import { FiLogOut } from 'react-icons/fi';
+import { ToastContainer, toast } from 'react-toastify';
 
 const Header = () => {
 
-    const [userinfo, setUserinfo] = React.useState({});
     const navigate = useRouter();
 
-    useEffect(() => {
-        const userinfo = JSON.parse(localStorage.getItem('userinfo'));
-        setUserinfo(userinfo);
-    }, []);
+    const { data } = useGetProfileQuery();
+    const userinfo = data?.data?.attributes;
 
-    console.log(url + userinfo?.user?.image);
+    console.log(userinfo);
 
     const [showProfileCard, setShowProfileCard] = React.useState(false);
     const handleShowProfileCard = () => {
@@ -26,13 +25,15 @@ const Header = () => {
 
     const handleLogout = () => {
         localStorage.removeItem('userinfo');
-        // navigate.push('/login');
+        toast.success('Logout successful!');
+        navigate.push('/login');
     }
 
 
 
     return (
         <div className='py-2 bg-[#4b1c2f]'>
+            <ToastContainer position="top-right" theme="colored" autoClose={5000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
             <div className='container'>
                 <div className='flex items-center justify-between'>
                     <div className='flex items-center'>
@@ -52,7 +53,7 @@ const Header = () => {
                                 <button className='  rounded-full text-white font-semibold  transition'>
                                     <img className='border-2 border-[#aa3866] w-12 h-12 rounded-full cursor-pointer' src={url + userinfo?.user?.image} alt="User Profile" />
                                 </button>
-                                <p className='text-white font-medium'>{userinfo?.user?.fullName}</p>
+                                <p className='text-white font-medium md:block hidden'>{userinfo?.user?.fullName}</p>
                             </div>
                     }
 
