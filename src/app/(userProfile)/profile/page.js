@@ -127,7 +127,7 @@ const Page = () => {
                 {/* Last Name */}
                 <div>
                     <label className="block text-sm font-medium text-[#4B1C2F] mb-1">Last Name</label>
-                    <input
+                    <input 
                         type="text"
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
@@ -143,7 +143,7 @@ const Page = () => {
                         type="email"
                         value={email}
                         disabled
-                        className="w-full border border-gray-300 bg-gray-100 rounded px-3 py-2"
+                        className="w-full cursor-not-allowed border border-gray-300 bg-gray-100 rounded px-3 py-2"
                     />
                 </div>
 

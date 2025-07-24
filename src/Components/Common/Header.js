@@ -59,7 +59,7 @@ const Header = () => {
 
                     {
                         showProfileCard &&
-                        <div className='absolute z-[99] right-5 top-20 bg-white shadow-lg rounded-md p-4 w-48'>
+                        <div className='absolute z-[99] right-5  md:right-24 top-20 bg-white shadow-lg rounded-md p-4 w-48'>
                             <ul className='space-y-5'>
                                 <li>
                                     <Link href={'/profile'} className='text-gray-700 hover:text-[#4b1c2f] flex items-center gap-2'><FaRegUserCircle /> My Profile</Link>
