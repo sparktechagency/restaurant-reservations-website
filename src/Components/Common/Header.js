@@ -4,7 +4,7 @@ import { useGetProfileQuery } from '@/redux/features/auth/profile/getProfile';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React from 'react';
-import { CiLocationOn } from "react-icons/ci";
+import { CiLocationOn } from "react-icons/ci"; 
 import { FaRegUserCircle } from 'react-icons/fa';
 import { FiLogOut } from 'react-icons/fi';
 import { ToastContainer, toast } from 'react-toastify';

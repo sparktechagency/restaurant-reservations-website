@@ -127,7 +127,7 @@ const Page = () => {
                 {/* Last Name */}
                 <div>
                     <label className="block text-sm font-medium text-[#4B1C2F] mb-1">Last Name</label>
-                    <input 
+                    <input
                         type="text"
                         value={lastName}
                         onChange={(e) => setLastName(e.target.value)}
